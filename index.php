@@ -42,7 +42,7 @@ if ($salary) {
 }
 
 if ($company) {
-    $query .= " AND u.name LIKE ?";
+    $query .= " AND u.company_name LIKE ?";
     $params[] = "%$company%";
     $types .= "s";
 }
@@ -115,7 +115,22 @@ $result = $stmt->get_result();
         <?php else: ?>
             <?php while ($job = $result->fetch_assoc()): ?>
                 <div class="job-card">
-                    <h2 class="job-title"><?php echo sanitize($job['title']); ?></h2>
+                    <div class="job-card-header">
+                        <h2 class="job-title"><?php echo sanitize($job['title']); ?></h2>
+                        
+                        <?php if (isLoggedIn() && !isRecruiter()): 
+                            // Check if job is saved
+                            $stmt = $conn->prepare("SELECT id FROM saved_jobs WHERE user_id = ? AND job_id = ?");
+                            $stmt->bind_param("ii", $_SESSION['user_id'], $job['id']);
+                            $stmt->execute();
+                            $is_saved = $stmt->get_result()->num_rows > 0;
+                        ?>
+                            <a href="save-job.php?id=<?php echo $job['id']; ?>" class="save-job-btn <?php echo $is_saved ? 'saved' : ''; ?>" title="<?php echo $is_saved ? 'Remove from saved jobs' : 'Save this job'; ?>">
+                                <i class="fas <?php echo $is_saved ? 'fa-bookmark' : 'fa-bookmark-o'; ?>"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                    
                     <div class="company-name">
                         🏢 <?php echo sanitize($job['company_name']); ?>
                     </div>

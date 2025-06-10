@@ -28,10 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($stmt->execute()) {
             $success = "Job posted successfully!";
+            // Clear form data after successful submission
+            $_POST = array();
+            // Redirect to prevent form resubmission
+            header("Location: /job-portal/post-job.php?success=1");
+            exit;
         } else {
             $error = "Error posting job. Please try again.";
         }
     }
+}
+
+// Check for success parameter in URL (after redirect)
+if (isset($_GET['success']) && $_GET['success'] == 1) {
+    $success = "Job posted successfully!";
 }
 ?>
 
@@ -51,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
         
-        <form method="POST" action="">
+        <form method="POST" action="" id="postJobForm">
             <div class="form-group">
                 <label for="title">Job Title</label>
                 <input type="text" id="title" name="title" class="form-control" required
@@ -101,9 +111,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                        value="<?php echo isset($_POST['experience']) ? htmlspecialchars($_POST['experience']) : ''; ?>">
             </div>
             
-            <button type="submit" class="btn btn-primary">Post Job</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Post Job</button>
         </form>
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once 'includes/footer.php'; ?>
+
+<script>
+// Prevent double submission
+document.getElementById('postJobForm').addEventListener('submit', function(e) {
+    // Disable the submit button
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').innerHTML = 'Posting...';
+});
+</script>

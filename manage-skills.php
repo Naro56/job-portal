@@ -96,7 +96,7 @@ $popular_skills = $stmt->get_result();
 
 <div class="container">
     <div class="form-container">
-        <h1>Manage Skills</h1>
+        <h1 class="page-title">Manage Skills</h1>
         
         <?php if ($error): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
@@ -108,18 +108,23 @@ $popular_skills = $stmt->get_result();
         
         <div class="row">
             <div class="col-md-6">
-                <div class="card">
+                <div class="card skills-card">
                     <div class="card-header">
-                        <h3>Your Skills</h3>
+                        <h3><i class="fas fa-list"></i> Your Skills</h3>
                     </div>
                     <div class="card-body">
                         <?php if ($skills->num_rows === 0): ?>
-                            <p>You haven't added any skills yet. Add skills to help recruiters find you.</p>
+                            <div class="empty-state">
+                                <i class="fas fa-lightbulb empty-icon"></i>
+                                <p>You haven't added any skills yet. Add skills to help recruiters find you.</p>
+                            </div>
                         <?php else: ?>
                             <div class="skills-list">
                                 <?php while ($skill = $skills->fetch_assoc()): ?>
                                     <div class="skill-item">
-                                        <span class="skill-badge"><?php echo sanitize($skill['name']); ?></span>
+                                        <span class="skill-badge">
+                                            <?php echo sanitize($skill['name']); ?>
+                                        </span>
                                         <a href="?remove=<?php echo $skill['id']; ?>" class="skill-remove" 
                                            onclick="return confirm('Are you sure you want to remove this skill?')">
                                             <i class="fas fa-times"></i>
@@ -133,26 +138,30 @@ $popular_skills = $stmt->get_result();
             </div>
             
             <div class="col-md-6">
-                <div class="card">
+                <div class="card skills-card">
                     <div class="card-header">
-                        <h3>Add New Skill</h3>
+                        <h3><i class="fas fa-plus-circle"></i> Add New Skill</h3>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form method="POST" class="skill-form">
                             <div class="form-group">
                                 <label for="skill_name">Skill Name</label>
-                                <input type="text" id="skill_name" name="skill_name" class="form-control" required>
+                                <div class="input-group">
+                                    <input type="text" id="skill_name" name="skill_name" class="form-control" required 
+                                           placeholder="e.g., PHP, JavaScript, Project Management">
+                                    <div class="input-group-append">
+                                        <button type="submit" name="add_skill" class="btn btn-primary">
+                                            <i class="fas fa-plus"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
                                 <small class="form-text text-muted">Enter a skill relevant to your profession</small>
-                            </div>
-                            
-                            <div class="form-group">
-                                <button type="submit" name="add_skill" class="btn btn-primary">Add Skill</button>
                             </div>
                         </form>
                         
                         <?php if ($popular_skills->num_rows > 0): ?>
                             <div class="popular-skills mt-4">
-                                <h4>Popular Skills</h4>
+                                <h4><i class="fas fa-fire"></i> Popular Skills</h4>
                                 <p>Click to add to your profile:</p>
                                 <div class="popular-skills-list">
                                     <?php while ($skill = $popular_skills->fetch_assoc()): ?>
@@ -170,9 +179,131 @@ $popular_skills = $stmt->get_result();
         </div>
         
         <div class="form-actions mt-4">
-            <a href="profile.php" class="btn btn-secondary">Back to Profile</a>
+            <a href="profile.php" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a>
         </div>
     </div>
 </div>
 
+<style>
+.page-title {
+    margin-bottom: 30px;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 15px;
+}
+
+.skills-card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 8px;
+}
+
+.skills-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    padding: 15px 20px;
+}
+
+.skills-card .card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.skills-card .card-body {
+    padding: 20px;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.skill-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.skill-badge {
+    background-color: #e9f5ff;
+    color: #0066cc;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.skill-remove {
+    color: #dc3545;
+    font-size: 14px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.skill-remove:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.popular-skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.skill-suggestion {
+    background-color: #f8f9fa;
+    color: #495057;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid #e9ecef;
+}
+
+.skill-suggestion:hover {
+    background-color: #e9ecef;
+    text-decoration: none;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+}
+
+.empty-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+    color: #adb5bd;
+}
+
+.skill-form {
+    margin-bottom: 20px;
+}
+
+.form-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-start;
+}
+</style>
+
 <?php require_once 'includes/footer.php'; ?>
+
+

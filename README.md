@@ -5,18 +5,21 @@ FindWork is a web-based job portal that connects job seekers with recruiters. Th
 ## Features
 
 ### For Job Seekers
-- Browse job listings with filtering options (job type, location, experience, salary)
+- Browse job listings with filtering options (job type, location, experience, salary, company)
 - View detailed job descriptions
-- Apply to jobs through external application forms
+- Save jobs for later viewing
+- Apply to jobs with resume upload
 - Track application status (applied, selected, rejected)
-- User account management
+- User account management with profile information
+- Phone number collection during signup for better recruiter contact
 
 ### For Recruiters
-- Post new job opportunities
+- Post new job opportunities with form validation and duplicate submission prevention
 - Manage job listings (open/close positions)
 - View applicants for each job posting
 - Update application statuses (select/reject candidates)
-- Dashboard with application statistics
+- Dashboard with comprehensive application statistics
+- Separate "My Jobs" view for simplified job management
 
 ## Technology Stack
 
@@ -75,7 +78,7 @@ The database comes pre-loaded with sample accounts for testing:
 
 ### Recruiter Account
 - **Email**: recruiter@example.com
-- **Password**: password123
+- **Password**: 123456
 - **Role**: Recruiter (Tech Corp)
 
 ### Sample Jobs
@@ -92,16 +95,25 @@ findwork/
 ├── includes/                # Shared PHP components
 │   ├── db.php               # Database connection
 │   ├── header.php           # Page header
-│   └── footer.php           # Page footer
+│   ├── footer.php           # Page footer
+│   └── functions.php        # Helper functions
 ├── recruiter/               # Recruiter-specific pages
-│   ├── dashboard.php        # Recruiter dashboard
+│   ├── dashboard.php        # Recruiter dashboard with statistics
+│   ├── my-jobs.php          # Simplified job management
 │   ├── view-applicants.php  # View job applicants
-│   └── close-job.php        # Close job listing
-├── index.php                # Home page with job listings
+│   ├── close-job.php        # Close job listing
+│   └── reopen-job.php       # Reopen closed job listing
+├── index.php                # Home page with job listings and filters
 ├── login.php                # User login
-├── signup.php               # User registration
+├── signup.php               # User registration with phone number
 ├── dashboard.php            # Job seeker dashboard
 ├── post-job.php             # Post new job (recruiters)
+├── job-details.php          # Detailed job view
+├── apply.php                # Apply for jobs
+├── save-job.php             # Save/unsave jobs
+├── saved-jobs.php           # View saved jobs
+├── remove-saved-job.php     # Remove jobs from saved list
+├── upload-resume.php        # Upload/update resume
 ├── logout.php               # User logout
 ├── style.css                # Main stylesheet
 └── README.md                # Project documentation
@@ -114,16 +126,23 @@ findwork/
 1. **Create an Account or Use Sample Account**
    - Use the sample account: jobseeker@example.com / password123
    - Or click "Sign Up" and select "Job Seeker" role to create a new account
+   - Provide your phone number during signup for better recruiter contact
 
 2. **Browse Jobs**
    - Use the home page to view all available jobs
-   - Apply filters to narrow down your search
+   - Apply filters to narrow down your search by job type, location, experience, salary, or company
 
-3. **Apply for Jobs**
+3. **Save Jobs for Later**
+   - Click the bookmark icon on any job listing to save it
+   - View all saved jobs in the "Saved Jobs" section
+   - Remove jobs from saved list when no longer interested
+
+4. **Apply for Jobs**
    - Click "Apply Now" on any job listing
-   - Complete the external application form
+   - Upload your resume and provide contact information
+   - Add any additional information requested by the recruiter
 
-4. **Track Applications**
+5. **Track Applications**
    - Visit "My Applications" to see the status of your applications
 
 ### For Recruiters
@@ -135,14 +154,18 @@ findwork/
 2. **Post a Job**
    - Click "Post Job" in the navigation menu
    - Fill in all job details and submit
+   - Form validation prevents incomplete submissions
+   - Duplicate submission prevention ensures jobs aren't posted multiple times
 
 3. **Manage Applications**
-   - Visit your dashboard to see all posted jobs
+   - Visit your dashboard to see all posted jobs with detailed statistics
+   - Use "My Jobs" for a simplified view of your job listings
    - Click "View Applicants" to see candidates for each job
    - Update application statuses (select/reject)
 
-4. **Close Job Listings**
+4. **Close/Reopen Job Listings**
    - Click "Close Job" when a position is filled
+   - Click "Reopen Job" if you need more applicants for a previously closed position
 
 ## Contributing
 

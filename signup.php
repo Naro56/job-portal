@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     $role = $_POST['role'] ?? '';
+    $phone = trim($_POST['phone'] ?? '');
     
     // Company details for recruiters
     $company_name = trim($_POST['company_name'] ?? '');
@@ -54,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 try {
                     // Insert user
-                    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role, company_name, company_website, company_description) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                    $stmt->bind_param("sssssss", $name, $email, $hashed_password, $role, $company_name, $company_website, $company_description);
+                    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role, phone, company_name, company_website, company_description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("ssssssss", $name, $email, $hashed_password, $role, $phone, $company_name, $company_website, $company_description);
                     $stmt->execute();
                     
                     // Get user ID
@@ -113,6 +114,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="email">Email *</label>
                     <input type="email" id="email" name="email" class="form-control" required
                            value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="form-control"
+                           value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
+                    <small class="form-text text-muted">This will be used by recruiters to contact you</small>
                 </div>
                 
                 <div class="form-group">

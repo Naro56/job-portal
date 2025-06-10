@@ -111,3 +111,46 @@ INSERT INTO jobs (title, description, type, location, salary, experience_require
 -- INSERT INTO jobs (title, description, type, location, salary, experience_required, company_id) VALUES
 -- ('Senior PHP Developer', 'Looking for an experienced PHP developer...', 'full-time', 'Mumbai', '₹15L - ₹20L', '3-5 years', 2),
 -- ('Web Development Intern', 'Internship opportunity for web development...', 'internship', 'Remote', '₹25K/month', '0-1 year', 2);
+
+
+-- [6/10/2025 4:32 PM] Naresh: -- Create saved_jobs table
+-- CREATE TABLE IF NOT EXISTS saved_jobs (
+--     id INT PRIMARY KEY AUTO_INCREMENT,
+--     user_id INT NOT NULL,
+--     job_id INT NOT NULL,
+--     saved_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+--     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+--     UNIQUE KEY (user_id, job_id)
+-- );
+
+-- -- Create skills table
+-- CREATE TABLE IF NOT EXISTS skills (
+--     id INT PRIMARY KEY AUTO_INCREMENT,
+--     name VARCHAR(50) NOT NULL UNIQUE
+-- );
+
+-- -- Create user_skills table
+-- CREATE TABLE IF NOT EXISTS user_skills (
+--     id INT PRIMARY KEY AUTO_INCREMENT,
+--     user_id INT NOT NULL,
+--     skill_id INT NOT NULL,
+--     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+--     FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+--     UNIQUE KEY (user_id, skill_id)
+-- );
+
+-- -- Create user_resumes table
+-- CREATE TABLE IF NOT EXISTS user_resumes (
+--     id INT PRIMARY KEY AUTO_INCREMENT,
+--     user_id INT NOT NULL,
+--     resume_path VARCHAR(255) NOT NULL,
+--     uploaded_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+-- );
+-- [6/10/2025 4:33 PM] Naresh: -- Add company fields to users table if they don't exist
+-- ALTER TABLE users 
+-- ADD COLUMN IF NOT EXISTS company_name VARCHAR(100) NULL,
+-- ADD COLUMN IF NOT EXISTS company_website VARCHAR(255) NULL,
+-- ADD COLUMN IF NOT EXISTS company_description TEXT NULL;
+

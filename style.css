@@ -257,3 +257,63 @@ main.container {
     margin-top: auto;
     border-top: 1px solid #e5e7eb;
 }
+
+/* Save Job Button Styles */
+.save-job-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.save-job-btn:hover {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.save-job-btn.saved {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.save-job-btn.saved:hover {
+    background: #fde68a;
+}
+
+.job-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+/* Saved Jobs Page Styles */
+.saved-jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.btn-remove {
+    color: #ef4444;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fee2e2;
+    transition: all 0.2s;
+}
+
+.btn-remove:hover {
+    background: #fecaca;
+}

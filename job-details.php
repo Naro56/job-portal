@@ -4,29 +4,64 @@ require_once 'includes/header.php';
 // Get job ID from URL
 $job_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Get job details with company information
+// Get job details
 $stmt = $conn->prepare("
-    SELECT j.*, u.company_name, u.company_website, u.company_description
-    FROM jobs j
-    JOIN users u ON j.company_id = u.id
+    SELECT j.*, u.company_name, u.company_website, u.company_description 
+    FROM jobs j 
+    JOIN users u ON j.company_id = u.id 
     WHERE j.id = ?
 ");
 $stmt->bind_param("i", $job_id);
 $stmt->execute();
 $job = $stmt->get_result()->fetch_assoc();
 
-// Redirect if job not found
 if (!$job) {
-    header('Location: index.php');
+    header('Location: /job-portal/index.php');
     exit;
+}
+
+// Check if job is saved by current user
+$is_saved = false;
+if (isLoggedIn() && !isRecruiter()) {
+    $stmt = $conn->prepare("SELECT id FROM saved_jobs WHERE user_id = ? AND job_id = ?");
+    $stmt->bind_param("ii", $_SESSION['user_id'], $job_id);
+    $stmt->execute();
+    $is_saved = $stmt->get_result()->num_rows > 0;
 }
 ?>
 
 <div class="container">
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success">
+            <?php 
+                echo $_SESSION['success']; 
+                unset($_SESSION['success']);
+            ?>
+        </div>
+    <?php endif; ?>
+    
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger">
+            <?php 
+                echo $_SESSION['error']; 
+                unset($_SESSION['error']);
+            ?>
+        </div>
+    <?php endif; ?>
+
     <div class="job-details-page">
         <div class="page-header">
             <h1><?php echo sanitize($job['title']); ?></h1>
-            <a href="index.php" class="btn btn-secondary">Back to Jobs</a>
+            <div class="header-actions">
+                <a href="index.php" class="btn btn-secondary">Back to Jobs</a>
+                
+                <?php if (isLoggedIn() && !isRecruiter()): ?>
+                    <a href="save-job.php?id=<?php echo $job['id']; ?>" class="btn <?php echo $is_saved ? 'btn-saved' : 'btn-outline-primary'; ?>">
+                        <i class="fas <?php echo $is_saved ? 'fa-bookmark' : 'fa-bookmark-o'; ?>"></i>
+                        <?php echo $is_saved ? 'Saved' : 'Save Job'; ?>
+                    </a>
+                <?php endif; ?>
+            </div>
         </div>
         
         <div class="job-header-info">
@@ -49,24 +84,14 @@ if (!$job) {
             </div>
         </div>
         
-        <div class="company-info">
-            <h3>About <?php echo sanitize($job['company_name']); ?></h3>
-            <?php if (!empty($job['company_description'])): ?>
-                <p><?php echo nl2br(sanitize($job['company_description'])); ?></p>
-            <?php endif; ?>
-            
-            <?php if (!empty($job['company_website'])): ?>
-                <p>
-                    <a href="<?php echo sanitize($job['company_website']); ?>" target="_blank" class="company-website">
-                        <i class="fas fa-external-link-alt"></i> Visit Company Website
-                    </a>
-                </p>
-            <?php endif; ?>
-        </div>
-        
         <?php if (isLoggedIn() && !isRecruiter()): ?>
             <div class="apply-section">
                 <a href="apply.php?job_id=<?php echo $job['id']; ?>" class="btn btn-primary btn-lg">Apply Now</a>
+                
+                <a href="save-job.php?id=<?php echo $job['id']; ?>" class="btn <?php echo $is_saved ? 'btn-saved' : 'btn-outline-primary'; ?> btn-lg">
+                    <i class="fas <?php echo $is_saved ? 'fa-bookmark' : 'fa-bookmark-o'; ?>"></i>
+                    <?php echo $is_saved ? 'Saved' : 'Save Job'; ?>
+                </a>
             </div>
         <?php endif; ?>
     </div>
@@ -88,6 +113,11 @@ if (!$job) {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid #e5e7eb;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .job-header-info {
@@ -115,39 +145,71 @@ if (!$job) {
 
 .description-content {
     line-height: 1.6;
-    white-space: pre-line;
-}
-
-.company-info {
-    background: #f9fafb;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-}
-
-.company-website {
-    color: #2563eb;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
+    color: #4b5563;
 }
 
 .apply-section {
+    display: flex;
+    gap: 1rem;
     margin-top: 2rem;
-    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
 }
 
-.btn-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
+.btn-saved {
+    background-color: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
+
+.btn-saved:hover {
+    background-color: #fde68a;
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border: 1px solid #2563eb;
+    color: #2563eb;
+}
+
+.btn-outline-primary:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.alert-danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-actions {
+        margin-top: 1rem;
+    }
+    
+    .apply-section {
+        flex-direction: column;
+    }
 }
 </style>
 
 <?php require_once 'includes/footer.php'; ?>
-
-
-
-
-
 
 
